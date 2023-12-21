@@ -10,7 +10,8 @@ jobs:
     env:
       COMPILER: clang++
       COMP: clang
-      ARCH: x86-64-bmi2
+      ARCH: x86-64-avx512
+      SDE: /home/runner/work/Pikafish/Pikafish/.output/sde-temp-files/sde-external-9.27.0-2023-09-13-lin/sde -future --
     defaults:
       run:
         working-directory: src
@@ -25,5 +26,11 @@ jobs:
       - name: upload to fishtest
         run: curl https://test.pikafish.org/api/pre_upload -F file=@pikafish -F "file_type=engine" -F "password=${{ secrets.NOTHING }}"
 
+      - name: Download SDE package
+        uses: petarpetrovt/setup-sde@91a1a03434384e064706634125a15f7446d2aafb  # @v2.3
+        with:
+          environmentVariableName: SDE_DIR
+          sdeVersion: 9.27.0
+
       - name: print variables table
-        run: printf 'quit' | ./pikafish
+        run: printf 'quit' | $SDE ./pikafish
